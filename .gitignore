@@ -1,0 +1,14 @@
+.idea
+_db
+_logs
+_rabbit
+/public/images
+/public/original-images
+/public/storage
+/storage/*.key
+/vendor
+.env
+.env.backup
+.phpunit.result.cache
+tests/_output
+tests/Support/_generated

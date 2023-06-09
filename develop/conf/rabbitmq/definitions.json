@@ -1,0 +1,32 @@
+{
+    "queues": [
+        {
+            "name": "thumbnailer_queue",
+            "vhost": "thumbnailer",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        }
+    ],
+    "exchanges": [
+        {
+            "name": "thumbnailer_exchange",
+            "vhost": "thumbnailer",
+            "type": "direct",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        }
+    ],
+    "bindings": [
+        {
+            "source": "thumbnailer_exchange",
+            "vhost": "thumbnailer",
+            "destination": "thumbnailer_queue",
+            "destination_type": "queue",
+            "routing_key": "",
+            "arguments": {}
+        }
+    ]
+}

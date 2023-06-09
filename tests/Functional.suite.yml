@@ -1,0 +1,40 @@
+actor: FunctionalTester
+modules:
+  config:
+    PhpBrowser:
+      baseUrl: 'http://10.222.33.2'
+      originalImagesBaseUrl: 'http://10.222.33.2/original-images/'
+      handledImagesBaseUrl: 'http://10.222.33.2/images/'
+    Filesystem:
+      originalImagesPath: /data/public/original-images/
+      handledImagesPath: /data/public/images/
+    Db:
+      aTestedMethod: 'Resize'
+    AMQP:
+      exchangeName: 'thumbnailer_exchange'
+      queueName: 'thumbnailer_queue'
+  enabled:
+    - \Tests\Support\Helper\FunctionalHelper
+    - AMQP:
+        host: '10.222.33.5'
+        port: '5672'
+        username: 'admin'
+        password: 'password'
+        vhost: 'thumbnailer'
+        queues: [ thumbnailer_queue ]
+        single_channel: true
+    - Filesystem
+    - Db:
+        dsn: 'pgsql:host=10.222.33.4;dbname=thumbnailer'
+        user: 'postgres'
+        password: '123'
+#        populate: true # load dump before all tests
+#        cleanup: true # load dump for each test
+        dump: 'tests/_data/dump.sql'
+    - REST:
+        depends: PhpBrowser
+        url: 'http://10.222.33.2/'
+        shortDebugResponse: 300 # only the first 300 characters of the response
+    - PhpBrowser:
+        url: 10.222.33.2
+    - Asserts:

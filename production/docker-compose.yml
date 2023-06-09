@@ -1,0 +1,96 @@
+version: '3.5'
+
+x-logging: &logging
+    logging:
+        options:
+            max-size: "5m"
+            max-file: "2"
+
+x-volumes: &vol
+    volumes:
+        - "thumbnailer_data:/data"
+        - "./public/images:/data/public/images:rw"
+        - "./public/original-images:/data/public/original-images:rw"
+
+x-ulimits: &ulimit
+    ulimits:
+        nproc: 65535
+        nofile:
+            soft: 65535
+            hard: 65535
+
+services:
+    web:
+        image: cr.userstory.ru/userstory-microservice/thumbnailer/nginx:${branch}
+        container_name: thumbnailer-web
+        <<: *vol
+        <<: *ulimit
+        <<: *logging
+        ports:
+            - "10.222.33.1:80:80"
+        restart: always
+        depends_on:
+            - fpm
+            - db
+        networks:
+            networks_thumbnailer:
+                ipv4_address: 10.222.33.2
+
+    fpm:
+        container_name: thumbnailer-fpm
+        image: cr.userstory.ru/userstory-microservice/thumbnailer/php-fpm:${branch}
+        restart: always
+        <<: *vol
+        <<: *ulimit
+        <<: *logging
+        networks:
+            networks_thumbnailer:
+                ipv4_address: 10.222.33.3
+
+    worker:
+        image: cr.userstory.ru/userstory-microservice/thumbnailer/php-cli:${branch}
+        restart: always
+        <<: *vol
+        <<: *ulimit
+        <<: *logging
+        depends_on:
+            - fpm
+            - web
+            - db
+            - rabbit
+        networks:
+            networks_thumbnailer:
+
+    db:
+        image: cr.userstory.ru/userstory-microservice/thumbnailer/db:${branch}
+        container_name: thumbnailer-db
+        restart: always
+        environment:
+            - POSTGRES_DB=thumbnailer
+            - POSTGRES_PASSWORD=123
+        volumes:
+            - ./_db:/var/lib/postgresql/data:rw
+        networks:
+            networks_thumbnailer:
+                ipv4_address: 10.222.33.4
+
+    rabbit:
+        container_name: thumbnailer-rabbit
+        image: cr.userstory.ru/userstory-microservice/thumbnailer/rabbitmq:${branch}
+        restart: always
+        ports:
+            - 10.222.33.1:15672:15672
+            - 10.222.33.1:5672:5672
+        networks:
+            networks_thumbnailer:
+                ipv4_address: 10.222.33.5
+
+volumes:
+    thumbnailer_data:
+
+networks:
+    networks_thumbnailer:
+        ipam:
+            driver: default
+            config:
+                - subnet: 10.222.33.0/24

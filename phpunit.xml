@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory suffix="Test.php">./tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Feature">
+            <directory suffix="Test.php">./tests/Feature</directory>
+        </testsuite>
+    </testsuites>
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">./app</directory>
+        </include>
+    </coverage>
+<!--    <php>-->
+<!--        <env name="APP_ENV" value="testing"/>-->
+<!--        <env name="BCRYPT_ROUNDS" value="4"/>-->
+<!--        <env name="CACHE_DRIVER" value="array"/>-->
+<!--        &lt;!&ndash; <env name="DB_CONNECTION" value="sqlite"/> &ndash;&gt;-->
+<!--        &lt;!&ndash; <env name="DB_DATABASE" value=":memory:"/> &ndash;&gt;-->
+<!--        <env name="MAIL_MAILER" value="array"/>-->
+<!--        <env name="SESSION_DRIVER" value="array"/>-->
+<!--        <env name="TELESCOPE_ENABLED" value="false"/>-->
+
+<!--        &lt;!&ndash; Own env variables &ndash;&gt;-->
+<!--        <env name="APP_WORK_PATH" value="/data1/"/>-->
+
+<!--        <env name="DB_CONNECTION" value="pgsql"/>-->
+<!--        <env name="DB_HOST" value="db"/>-->
+<!--        <env name="DB_PORT" value="5432"/>-->
+<!--        <env name="DB_DATABASE" value="thumbnailer"/>-->
+<!--        <env name="DB_USERNAME" value="postgres"/>-->
+<!--        <env name="DB_PASSWORD" value="123"/>-->
+
+<!--        <env name="QUEUE_CONNECTION" value="rabbitmq"/>-->
+<!--        <env name="RABBITMQ_DSN" value="amqp://"/>-->
+<!--        <env name="RABBITMQ_HOST" value="10.222.33.5"/>-->
+<!--        <env name="RABBITMQ_PORT" value="5672"/>-->
+<!--        <env name="RABBITMQ_VHOST" value="thumbnailer"/>-->
+<!--        <env name="RABBITMQ_USER" value="admin"/>-->
+<!--        <env name="RABBITMQ_PASSWORD" value="password"/>-->
+<!--    </php>-->
+</phpunit>

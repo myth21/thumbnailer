@@ -1,0 +1,43 @@
+---
+
+- hosts: default
+
+  vars:
+    project_path: /data/docker/thumbnailer-natura
+    compose_path: ../docker-compose.yml
+    compose_name: docker-compose.yml
+    project_name: thumbnailer
+
+  tasks:
+    - name: Create dir {{project_path}}
+      file:
+        path: '{{ project_path }}'
+        state: directory
+
+    - name: Push local file {{compose_name }} to remote {{project_path}}
+      copy:
+        src: '{{ compose_path }}'
+        dest: '{{ project_path }}'
+        mode: 0777
+
+    - name: Make directory tree readable
+      file:
+        path: '{{ project_path }}'
+        mode: 0777
+        recurse: yes
+
+    - name: Docker-compose pull
+      shell: 'export branch={{branch}} && docker-compose -f {{ project_path }}/docker-compose.yml pull'
+
+    - name: Docker-compose down
+      shell: 'docker-compose -p {{ project_name }} -f {{ project_path }}/docker-compose.yml down -v'
+
+    - name: Sed stand port
+      shell: 'sed -i "s/"10.222.33.1:80:80"/8088:80/g" {{ project_path }}/docker-compose.yml'
+
+    - name: Docker-compose up
+      shell: 'export branch={{ branch }} && docker-compose -p {{ project_name }} -f {{ project_path }}/docker-compose.yml up -d --scale worker=3'
+
+    - name: Set rights
+      shell: 'chown -R 82:82 {{project_path}}/public'
+
